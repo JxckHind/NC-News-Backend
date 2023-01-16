@@ -13,6 +13,20 @@ afterAll(() => {
 });
 
 describe('app', () => {
+    describe('GET /...', () => {
+        test('status: 404 when passed an invalid URL', () => {
+            return request(app)
+                .get('/hello')
+                .expect(404);
+        })
+    })
+    describe('GET /api/...', () => {
+        test('status: 404 when passed an invalid path', () => {
+            return request(app)
+                .get('/api/animals')
+                .expect(404);
+        })
+    })
     describe('GET /api/topics', () => {
         test('status: 200', () => {
             return request(app)
