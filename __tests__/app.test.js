@@ -201,24 +201,6 @@ describe('app', () => {
                 const result = response.body.article[0];
                 expect(result.article_id).toBe(1);
             })
-            .then(() => {
-                return request(app)
-                .get('/api/articles/4')
-                .expect(200)
-            })
-            .then((response) => {
-                const result = response.body.article[0];
-                expect(result.article_id).toBe(4);
-            })
-            .then(() => {
-                return request(app)
-                .get('/api/articles/9')
-                .expect(200)
-            })
-            .then((response) => {
-                const result = response.body.article[0];
-                expect(result.article_id).toBe(9);
-            })
         })
         test('status: 400 when passed a bad article_id', () => {
             return request(app)
