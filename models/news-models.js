@@ -16,23 +16,17 @@ const fetchTopics = () => {
 const fetchArticles = (sort_by = 'created_at', order = 'DESC') => {
 
     let queryString = `
-    SELECT author, title, article_id, topic, created_at, votes, article_img_url FROM articles
+    SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url,
+    COUNT(comments.article_id) AS comment_count 
+    FROM articles
+    LEFT JOIN comments ON articles.article_id = comments.article_id 
+    GROUP BY articles.article_id
     `;
 
     queryString += `ORDER BY ${sort_by} ${order}`;
 
     return db.query(queryString).then((response) => {
-        const articleArr = response.rows;
-
-        articleArr.forEach((article) => {
-            article["comment_count"] = 0;
-            comments.forEach((comment) => {
-                if(comment.article_id === article.article_id) {
-                    article.comment_count++;
-                }
-            })
-        })
-        return articleArr;
+        return response.rows;
     })
 } 
 

@@ -89,7 +89,7 @@ describe('app', () => {
                 expect(typeof result).toBe('object');
             })
         })
-        test('status: 200 and responds with an object with a key of topics', () => {
+        test('status: 200 and responds with an object with a key of articles', () => {
             return request(app)
             .get('/api/articles')
             .expect(200)
@@ -123,6 +123,7 @@ describe('app', () => {
                     expect(article).toHaveProperty("votes");
                     expect(article).toHaveProperty("article_img_url");
                     expect(article).toHaveProperty("comment_count");
+                    expect(article.body).toBe(undefined);
                 })
              })
         })
