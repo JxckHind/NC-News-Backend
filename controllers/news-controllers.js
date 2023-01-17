@@ -1,4 +1,4 @@
-const fetchTopics = require("../models/news-models");
+const { fetchTopics, fetchArticles } = require("../models/news-models");
 
 const getTopics = (req, res, next) => {
     fetchTopics().then((topics) => {
@@ -9,4 +9,16 @@ const getTopics = (req, res, next) => {
     })
 }
 
-module.exports = getTopics;
+const getArticles = (req, res, next) => {
+    fetchArticles().then((articles) => {
+        res.status(200).send({articles});
+    })
+    .catch((err) => {
+        next(err);
+    })
+}
+
+module.exports = {
+    getTopics,
+    getArticles
+}

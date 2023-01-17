@@ -74,4 +74,76 @@ describe('app', () => {
              })
         })
     })
+    describe('GET /api/articles', () => {
+        test('status: 200', () => {
+            return request(app)
+                .get('/api/articles')
+                .expect(200);
+        })
+        test('status: 200 and responds with an object', () => {
+            return request(app)
+            .get('/api/articles')
+            .expect(200)
+            .then((response) => {
+                const result = response.body;
+                expect(typeof result).toBe('object');
+            })
+        })
+        test('status: 200 and responds with an object with a key of articles', () => {
+            return request(app)
+            .get('/api/articles')
+            .expect(200)
+            .then((response) => {
+                const result = response.body;
+                expect(result).toHaveProperty('articles');
+            }) 
+        })
+        test('status: 200 and responds with a nested array containing all the article objects', () => {
+            return request(app)
+            .get('/api/articles')
+            .expect(200)
+            .then((response) => {
+                const result = response.body.articles;
+                expect(Array.isArray(result)).toBe(true);                
+                expect(result).toHaveLength(12);
+             })
+        })
+        test('status: 200 and responds with a nested array containing all the article objects with the correct keys', () => {
+            return request(app)
+            .get('/api/articles')
+            .expect(200)
+            .then((response) => {
+                const result = response.body.articles;
+                result.forEach((article) => {
+                    expect(article).toHaveProperty("author");
+                    expect(article).toHaveProperty("title");
+                    expect(article).toHaveProperty("article_id");
+                    expect(article).toHaveProperty("topic");
+                    expect(article).toHaveProperty("created_at");
+                    expect(article).toHaveProperty("votes");
+                    expect(article).toHaveProperty("article_img_url");
+                    expect(article).toHaveProperty("comment_count");
+                    expect(article.body).toBe(undefined);
+                })
+             })
+        })
+        test('status: 200 and responds with a nested array containing all the article objects sorted by date in descending order by default', () => {
+            return request(app)
+            .get('/api/articles')
+            .expect(200)
+            .then((response) => {
+                const result = response.body.articles;
+                const dates = result.map((article) => {
+                    return article.created_at;
+                })
+                let isSorted = true;
+                for(let i = 1; i < dates.length; i++) {
+                    if(dates[i - 1] <= dates[i]) {
+                        isSorted = false;
+                    }
+                }
+                expect(isSorted).toBe(true);
+            })
+        })
+    })
 })

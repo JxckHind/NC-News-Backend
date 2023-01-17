@@ -1,8 +1,9 @@
 const express = require("express");
 const app = express();
-const getTopics = require("./controllers/news-controllers");
+const { getTopics, getArticles } = require("./controllers/news-controllers");
 
 app.get('/api/topics', getTopics);
+app.get('/api/articles', getArticles);
 
 app.use((err, req, res, next) => {
     console.log(err);
