@@ -13,18 +13,15 @@ afterAll(() => {
 });
 
 describe('app', () => {
-    describe('GET /...', () => {
-        test('status: 404 when passed an invalid URL', () => {
-            return request(app)
-                .get('/hello')
-                .expect(404);
-        })
-    })
-    describe('GET /api/...', () => {
+    describe('GET /not-a-path', () => {
         test('status: 404 when passed an invalid path', () => {
             return request(app)
-                .get('/api/animals')
-                .expect(404);
+                .get('/hello')
+                .expect(404)
+                .then((response) => {
+                    const msg = response.body.msg;
+                    expect(msg).toBe('Path not found');
+                })
         })
     })
     describe('GET /api/topics', () => {
@@ -143,6 +140,103 @@ describe('app', () => {
                 }
                 expect(isSorted).toBe(true);
             })
+        })
+    })
+    describe('GET /api/articles/:article_id', () => {
+        test('status: 200', () => {
+            return request(app)
+                .get('/api/articles/1')
+                .expect(200);
+        })
+        test('status: 200 and responds with an object', () => {
+            return request(app)
+            .get('/api/articles/1')
+            .expect(200)
+            .then((response) => {
+                const result = response.body;
+                expect(typeof result).toBe('object');
+            })
+        })
+        test('status: 200 and responds with an object with a key of article', () => {
+            return request(app)
+            .get('/api/articles/1')
+            .expect(200)
+            .then((response) => {
+                const result = response.body;
+                expect(result).toHaveProperty('article');
+            }) 
+        })
+        test('status: 200 and responds with a nested array containing a single article object', () => {
+            return request(app)
+            .get('/api/articles/1')
+            .expect(200)
+            .then((response) => {
+                const result = response.body.article;
+                expect(Array.isArray(result)).toBe(true);                
+                expect(result).toHaveLength(1);
+                expect(typeof result[0]).toBe('object');
+             })
+        })
+        test('status: 200 and responds with a single article object with the correct keys', () => {
+            return request(app)
+            .get('/api/articles/1')
+            .expect(200)
+            .then((response) => {
+                const result = response.body.article[0];
+                expect(result).toHaveProperty("author");
+                expect(result).toHaveProperty("title");
+                expect(result).toHaveProperty("article_id");
+                expect(result).toHaveProperty("body");
+                expect(result).toHaveProperty("topic");
+                expect(result).toHaveProperty("created_at");
+                expect(result).toHaveProperty("votes");
+                expect(result).toHaveProperty("article_img_url");
+             })
+        })
+        test('status: 200 and responds with a single article object with the correct article_id', () => {
+            return request(app)
+            .get('/api/articles/1')
+            .expect(200)
+            .then((response) => {
+                const result = response.body.article[0];
+                expect(result.article_id).toBe(1);
+            })
+            .then(() => {
+                return request(app)
+                .get('/api/articles/4')
+                .expect(200)
+            })
+            .then((response) => {
+                const result = response.body.article[0];
+                expect(result.article_id).toBe(4);
+            })
+            .then(() => {
+                return request(app)
+                .get('/api/articles/9')
+                .expect(200)
+            })
+            .then((response) => {
+                const result = response.body.article[0];
+                expect(result.article_id).toBe(9);
+            })
+        })
+        test('status: 400 when passed a bad article_id', () => {
+            return request(app)
+                .get('/api/articles/dog')
+                .expect(400)
+                .then((response) => {
+                    const msg = response.body.msg;
+                    expect(msg).toBe('Invalid article_id');
+                })
+        })
+        test('status: 404 when passed an article_id that doesnt exist in the database', () => {
+            return request(app)
+                .get('/api/articles/99999')
+                .expect(404)
+                .then((response) => {
+                    const msg = response.body.msg;
+                    expect(msg).toBe('article_id does not exist');
+                })
         })
     })
 })

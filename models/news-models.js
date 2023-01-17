@@ -34,9 +34,26 @@ const fetchArticles = (sort_by = 'created_at', order = 'DESC') => {
         })
         return articleArr;
     })
-} 
+}
+
+const fetchArticlesById = (article_id) => {
+
+    let queryString = `
+    SELECT * FROM articles
+    WHERE articles.article_id=$1
+    `;
+
+    return db.query(queryString, [article_id]).then((response) => {
+        if (response.rowCount === 0) {
+            return Promise.reject({status: 404, msg: 'article_id does not exist'});
+        } else {
+            return response.rows;
+        }
+    })
+}
 
 module.exports = {
     fetchTopics,
-    fetchArticles
+    fetchArticles,
+    fetchArticlesById
 }
