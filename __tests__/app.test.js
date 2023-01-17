@@ -48,7 +48,7 @@ describe('app', () => {
                 expect(result).toHaveProperty('topics');
             }) 
         })
-        test('status: 200 and responds with a nested array containing all the topic objects', () => {
+        test('status: 200 and responds with a nested array containing all of the topic objects', () => {
             return request(app)
             .get('/api/topics')
             .expect(200)
@@ -56,9 +56,12 @@ describe('app', () => {
                 const result = response.body.topics;
                 expect(Array.isArray(result)).toBe(true);                
                 expect(result).toHaveLength(3);
+                result.forEach((topic) => {
+                    expect(typeof topic).toBe('object');
+                })
              })
         })
-        test('status: 200 and responds with a nested array containing all the topic objects with the correct keys', () => {
+        test('status: 200 and responds with a nested array containing all of the topic objects with the correct keys', () => {
             return request(app)
             .get('/api/topics')
             .expect(200)
@@ -95,7 +98,7 @@ describe('app', () => {
                 expect(result).toHaveProperty('articles');
             }) 
         })
-        test('status: 200 and responds with a nested array containing all the article objects', () => {
+        test('status: 200 and responds with a nested array containing all of the article objects', () => {
             return request(app)
             .get('/api/articles')
             .expect(200)
@@ -103,9 +106,12 @@ describe('app', () => {
                 const result = response.body.articles;
                 expect(Array.isArray(result)).toBe(true);                
                 expect(result).toHaveLength(12);
+                result.forEach((article) => {
+                    expect(typeof article).toBe('object');
+                })
              })
         })
-        test('status: 200 and responds with a nested array containing all the article objects with the correct keys', () => {
+        test('status: 200 and responds with a nested array containing all of the article objects with the correct keys', () => {
             return request(app)
             .get('/api/articles')
             .expect(200)
@@ -124,7 +130,7 @@ describe('app', () => {
                 })
              })
         })
-        test('status: 200 and responds with a nested array containing all the article objects sorted by date in descending order by default', () => {
+        test('status: 200 and responds with a nested array containing all of the article objects sorted in descending date order by default', () => {
             return request(app)
             .get('/api/articles')
             .expect(200)
@@ -178,7 +184,7 @@ describe('app', () => {
                 expect(typeof result[0]).toBe('object');
              })
         })
-        test('status: 200 and responds with a single article object with the correct keys', () => {
+        test('status: 200 and responds with a nested array containing a single article object with the correct keys', () => {
             return request(app)
             .get('/api/articles/1')
             .expect(200)
@@ -194,7 +200,7 @@ describe('app', () => {
                 expect(result).toHaveProperty("article_img_url");
              })
         })
-        test('status: 200 and responds with a single article object with the correct article_id', () => {
+        test('status: 200 and responds with a nested array containing a single article object with the correct article_id', () => {
             return request(app)
             .get('/api/articles/1')
             .expect(200)
@@ -219,6 +225,99 @@ describe('app', () => {
                 .then((response) => {
                     const msg = response.body.msg;
                     expect(msg).toBe('article_id does not exist');
+                })
+        })
+    })
+    describe('GET /api/articles/:article_id/comments', () => {
+        test('status: 200', () => {
+            return request(app)
+                .get('/api/articles/1/comments')
+                .expect(200);
+        })
+        test('status: 200 and responds with an object', () => {
+            return request(app)
+            .get('/api/articles/1/comments')
+            .expect(200)
+            .then((response) => {
+                const result = response.body;
+                expect(typeof result).toBe('object');
+            })
+        })
+        test('status: 200 and responds with an object with a key of comments', () => {
+            return request(app)
+            .get('/api/articles/1/comments')
+            .expect(200)
+            .then((response) => {
+                const result = response.body;
+                expect(result).toHaveProperty('comments');
+            }) 
+        })
+        test('status: 200 and responds with a nested array containing all of the comment objects for a specific article_id', () => {
+            return request(app)
+            .get('/api/articles/1/comments')
+            .expect(200)
+            .then((response) => {
+                const result = response.body.comments;
+                expect(Array.isArray(result)).toBe(true);                
+                expect(result).toHaveLength(11);
+                result.forEach((comment) => {
+                    expect(typeof comment).toBe('object');
+                })
+             })
+        })
+        test('status: 200 and responds with a nested array containing all of the comment objects with the correct keys for a specific article_id', () => {
+            return request(app)
+            .get('/api/articles/1/comments')
+            .expect(200)
+            .then((response) => {
+                const result = response.body.comments;
+                result.forEach((comment) => {
+                    expect(comment).toHaveProperty("comment_id");
+                    expect(comment).toHaveProperty("votes");
+                    expect(comment).toHaveProperty("created_at");
+                    expect(comment).toHaveProperty("author");
+                    expect(comment).toHaveProperty("body");
+                    expect(comment).toHaveProperty("article_id");
+                })
+             })
+        })
+        test('status: 200 and responds with a nested array containing all of the comment objects for a specific article_id sorted in descending date order by default', () => {
+            return request(app)
+            .get('/api/articles/1/comments')
+            .expect(200)
+            .then((response) => {
+                const result = response.body.comments;
+                const dates = result.map((comment) => {
+                    return comment.created_at;
+                })
+                expect(dates).toBeSorted({descending: true});
+            })
+        })
+        test('status: 400 when passed a bad article_id', () => {
+            return request(app)
+                .get('/api/articles/dog/comments')
+                .expect(400)
+                .then((response) => {
+                    const msg = response.body.msg;
+                    expect(msg).toBe('Invalid article_id');
+                })
+        })
+        test('status: 404 when passed an article_id that doesnt exist in the database', () => {
+            return request(app)
+                .get('/api/articles/99999/comments')
+                .expect(404)
+                .then((response) => {
+                    const msg = response.body.msg;
+                    expect(msg).toBe('article_id does not exist');
+                })
+        })
+        test('status: 404 when a comment does not exist for a specific article_id', () => {
+            return request(app)
+                .get('/api/articles/2/comments')
+                .expect(404)
+                .then((response) => {
+                    const msg = response.body.msg;
+                    expect(msg).toBe('There are no comments for the specified article_id');
                 })
         })
     })

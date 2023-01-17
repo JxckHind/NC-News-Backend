@@ -1,4 +1,5 @@
 const db  = require("../db/connection");
+const comments = require("../db/data/test-data/comments");
 
 const fetchTopics = () => {
     
@@ -45,8 +46,43 @@ const fetchArticlesById = (article_id) => {
     })
 }
 
+const checkCommentExists = (article_id) => {
+
+    let queryString = `
+    SELECT article_id FROM articles
+    WHERE articles.article_id=$1
+    `;
+
+    return db.query(queryString, [article_id]).then((response) => {
+        if (response.rowCount === 0) {
+            return Promise.reject({status: 404, msg: 'article_id does not exist'});
+        } else {
+            return response.rows;
+        }
+    })
+}
+
+const fetchCommentsById = (article_id) => {
+
+    let queryString = `
+    SELECT * FROM comments
+    WHERE comments.article_id=$1
+    ORDER BY created_at DESC
+    `;
+
+    return db.query(queryString, [article_id]).then((response) => {
+        if (response.rowCount === 0) {
+            return Promise.reject({status: 404, msg: 'There are no comments for the specified article_id'});
+        } else {
+            return response.rows;
+        }
+    })
+}
+
 module.exports = {
     fetchTopics,
     fetchArticles,
-    fetchArticlesById
+    fetchArticlesById,
+    checkCommentExists,
+    fetchCommentsById
 }

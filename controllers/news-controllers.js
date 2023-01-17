@@ -1,4 +1,4 @@
-const { fetchTopics, fetchArticles, fetchArticlesById } = require("../models/news-models");
+const { fetchTopics, fetchArticles, fetchArticlesById, checkCommentExists, fetchCommentsById } = require("../models/news-models");
 
 const getTopics = (req, res, next) => {
     fetchTopics().then((topics) => {
@@ -28,8 +28,23 @@ const getArticlesById = (req, res, next) => {
     })
 }
 
+const getCommentsById = (req, res, next) => {
+    const {article_id} = req.params;
+    checkCommentExists(article_id)
+    .then(() => {
+        return fetchCommentsById(article_id);
+    })
+    .then((comments) => {
+        res.status(200).send({comments});
+    })
+    .catch((err) => {
+        next(err);
+    })
+}
+
 module.exports = {
     getTopics,
     getArticles,
-    getArticlesById
+    getArticlesById,
+    getCommentsById
 }
