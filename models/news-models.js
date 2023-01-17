@@ -1,5 +1,4 @@
 const db  = require("../db/connection");
-const comments = require("../db/data/test-data/comments");
 
 const fetchTopics = () => {
     
