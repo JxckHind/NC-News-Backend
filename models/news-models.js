@@ -45,8 +45,28 @@ const fetchArticlesById = (article_id) => {
     })
 }
 
+const updateVotesById = (article_id, inc_votes) => {
+
+    const newVoteData = [
+        article_id,
+        inc_votes
+    ]
+
+    let queryString = `
+    UPDATE articles
+    SET votes = votes + $2
+    WHERE articles.article_id = $1
+    RETURNING *
+    `;
+
+    return db.query(queryString, newVoteData).then((response) => {
+        return response.rows[0];
+    })
+}
+
 module.exports = {
     fetchTopics,
     fetchArticles,
-    fetchArticlesById
+    fetchArticlesById,
+    updateVotesById
 }
