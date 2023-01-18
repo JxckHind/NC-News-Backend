@@ -307,7 +307,7 @@ describe('app', () => {
             .expect(400)
             .then((response) => {
                 const msg = response.body.msg;
-                expect(msg).toBe('Invalid article_id');
+                expect(msg).toBe('Invalid input - enter integer instead of string');
             })
         })
         test('status: 404 when passed an article_id that doesnt exist in the database', () => {
@@ -418,7 +418,7 @@ describe('app', () => {
             })
             .then((response) => {
                 const msg = response.body.msg;
-                expect(msg).toBe('Invalid article_id');
+                expect(msg).toBe('Invalid input - enter integer instead of string');
             })
         })
         test('status: 404 when passed an article_id that doesnt exist in the database', () => {
@@ -580,7 +580,7 @@ describe('app', () => {
             .send({})
             .then((response) => {
                 const msg = response.body.msg;
-                expect(msg).toBe('Request body cannot be empty');
+                expect(msg).toBe('Request body is missing required field(s)');
             })
         })
         test('status: 400 when inc_votes is invalid', () => {
