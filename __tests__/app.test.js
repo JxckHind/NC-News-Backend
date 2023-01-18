@@ -222,4 +222,52 @@ describe('app', () => {
                 })
         })
     })
+    describe('GET /api/users', () => {
+        test('status: 200', () => {
+            return request(app)
+                .get('/api/users')
+                .expect(200);
+        })
+        test('status: 200 and responds with an object', () => {
+            return request(app)
+            .get('/api/users')
+            .expect(200)
+            .then((response) => {
+                const result = response.body;
+                expect(typeof result).toBe('object');
+            })
+        })
+        test('status: 200 and responds with an object with a key of users', () => {
+            return request(app)
+            .get('/api/users')
+            .expect(200)
+            .then((response) => {
+                const result = response.body;
+                expect(result).toHaveProperty('users');
+            }) 
+        })
+        test('status: 200 and responds with a nested array containing all the user objects', () => {
+            return request(app)
+            .get('/api/users')
+            .expect(200)
+            .then((response) => {
+                const result = response.body.users;
+                expect(Array.isArray(result)).toBe(true);                
+                expect(result).toHaveLength(4);
+             })
+        })
+        test('status: 200 and responds with a nested array containing all the user objects with the correct keys', () => {
+            return request(app)
+            .get('/api/users')
+            .expect(200)
+            .then((response) => {
+                const result = response.body.users;
+                result.forEach((user) => {
+                    expect(user).toHaveProperty("username");
+                    expect(user).toHaveProperty("name");
+                    expect(user).toHaveProperty("avatar_url");
+                })
+             })
+        })
+    })
 })

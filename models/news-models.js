@@ -45,8 +45,20 @@ const fetchArticlesById = (article_id) => {
     })
 }
 
+const fetchUsers = () => {
+    
+    const queryString = `
+    SELECT * FROM users
+    `;
+
+    return db.query(queryString).then((response) => {
+        return (response.rows);
+    })
+}
+
 module.exports = {
     fetchTopics,
     fetchArticles,
-    fetchArticlesById
+    fetchArticlesById,
+    fetchUsers
 }
