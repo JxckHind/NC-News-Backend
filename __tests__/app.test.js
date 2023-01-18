@@ -472,6 +472,7 @@ describe('app', () => {
                 expect(msg).toBe('Username does not exist');
             })
         })
+    })
     describe('PATCH /api/articles/:article_id', () => {
         test('status: 200', () => {
             return request(app)
