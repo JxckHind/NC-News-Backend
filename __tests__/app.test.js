@@ -173,23 +173,21 @@ describe('app', () => {
                 expect(result).toHaveProperty('article');
             }) 
         })
-        test('status: 200 and responds with a nested array containing a single article object', () => {
+        test('status: 200 and responds with a nested article object', () => {
             return request(app)
             .get('/api/articles/1')
             .expect(200)
             .then((response) => {
                 const result = response.body.article;
-                expect(Array.isArray(result)).toBe(true);                
-                expect(result).toHaveLength(1);
-                expect(typeof result[0]).toBe('object');
+                expect(typeof result).toBe('object');
              })
         })
-        test('status: 200 and responds with a nested array containing a single article object with the correct keys', () => {
+        test('status: 200 and responds with a nested article object with the correct keys', () => {
             return request(app)
             .get('/api/articles/1')
             .expect(200)
             .then((response) => {
-                const result = response.body.article[0];
+                const result = response.body.article;
                 expect(result).toHaveProperty("author");
                 expect(result).toHaveProperty("title");
                 expect(result).toHaveProperty("article_id");
@@ -200,12 +198,12 @@ describe('app', () => {
                 expect(result).toHaveProperty("article_img_url");
              })
         })
-        test('status: 200 and responds with a nested array containing a single article object with the correct article_id', () => {
+        test('status: 200 and responds with a nested article object with the correct article_id', () => {
             return request(app)
             .get('/api/articles/1')
             .expect(200)
             .then((response) => {
-                const result = response.body.article[0];
+                const result = response.body.article;
                 expect(result.article_id).toBe(1);
             })
         })
@@ -214,18 +212,18 @@ describe('app', () => {
             .get('/api/articles/dog')
             .expect(400)
             .then((response) => {
-                    const msg = response.body.msg;
-                    expect(msg).toBe('Invalid article_id');
-                })
+                const msg = response.body.msg;
+                expect(msg).toBe('Invalid article_id');
+            })
         })
         test('status: 404 when passed an article_id that doesnt exist in the database', () => {
             return request(app)
             .get('/api/articles/99999')
             .expect(404)
             .then((response) => {
-                    const msg = response.body.msg;
-                    expect(msg).toBe('article_id does not exist');
-                })
+                const msg = response.body.msg;
+                expect(msg).toBe('article_id does not exist');
+            })
         })
     })
     describe('GET /api/articles/:article_id/comments', () => {
@@ -319,6 +317,159 @@ describe('app', () => {
             .then((response) => {
                 const msg = response.body.msg;
                 expect(msg).toBe('article_id does not exist');
+            })
+        })
+    })
+    describe('POST /api/articles/:article_id/comments', () => {
+        test('status: 201', () => {
+            return request(app)
+            .post('/api/articles/1/comments')
+            .expect(201)
+            .send({
+                username: "rogersop",
+                body: "The Gaviscon is all gone"
+            })
+        })
+        test('status: 201 and responds with an object', () => {
+            return request(app)
+            .post('/api/articles/1/comments')
+            .expect(201)
+            .send({
+                username: "rogersop",
+                body: "The Gaviscon is all gone"
+            })
+            .then((response) => {
+                const result = response.body;
+                expect(typeof result).toBe('object');
+            })
+        })
+        test('status: 201 and responds with an object with a key of comment', () => {
+            return request(app)
+            .post('/api/articles/1/comments')
+            .expect(201)
+            .send({
+                username: "rogersop",
+                body: "The Gaviscon is all gone"
+            })
+            .then((response) => {
+                const result = response.body;
+                expect(result).toHaveProperty('comment');
+            })
+        })
+        test('status: 201 and responds with a nested comment object with the correct keys', () => {
+            return request(app)
+            .post('/api/articles/1/comments')
+            .expect(201)
+            .send({
+                username: "rogersop",
+                body: "The Gaviscon is all gone"
+            })
+            .then((response) => {
+                const result = response.body.comment;
+                expect(result).toHaveProperty("comment_id");
+                expect(result).toHaveProperty("body");
+                expect(result).toHaveProperty("votes");
+                expect(result).toHaveProperty("author");
+                expect(result).toHaveProperty("article_id");
+                expect(result).toHaveProperty("created_at");
+            })
+        })
+        test('status: 201 and responds with a nested comment object with the correct values', () => {
+            return request(app)
+            .post('/api/articles/1/comments')
+            .expect(201)
+            .send({
+                username: "rogersop",
+                body: "The Gaviscon is all gone"
+            })
+            .then((response) => {
+                const result = response.body.comment;
+                expect(result.author).toBe("rogersop")
+                expect(result.body).toBe("The Gaviscon is all gone");
+                expect(result.votes).toBe(0);
+                expect(result.article_id).toBe(1);
+            })
+        })
+        test('status: 201 and responds with a nested comment object with the correct values and ignores any unnessesary properties added to the request', () => {
+            return request(app)
+            .post('/api/articles/1/comments')
+            .expect(201)
+            .send({
+                username: "rogersop",
+                body: "The Gaviscon is all gone",
+                votes: 10000,
+                article_id: 123
+            })
+            .then((response) => {
+                const result = response.body.comment;
+                expect(result.author).toBe("rogersop")
+                expect(result.body).toBe("The Gaviscon is all gone");
+                expect(result.votes).toBe(0);
+                expect(result.article_id).toBe(1);
+            })
+        })
+        test('status: 400 when passed a bad article_id', () => {
+            return request(app)
+            .post('/api/articles/dog/comments')
+            .expect(400)
+            .send({
+                username: "rogersop",
+                body: "The Gaviscon is all gone"
+            })
+            .then((response) => {
+                const msg = response.body.msg;
+                expect(msg).toBe('Invalid article_id');
+            })
+        })
+        test('status: 404 when passed an article_id that doesnt exist in the database', () => {
+            return request(app)
+            .post('/api/articles/99999/comments')
+            .expect(404)
+            .send({
+                username: "rogersop",
+                body: "The Gaviscon is all gone"
+            })
+            .then((response) => {
+                const msg = response.body.msg;
+                expect(msg).toBe('article_id does not exist');
+            })
+        })
+        test('status: 400 when the request body is empty or missing a required field', () => {
+            return request(app)
+            .post('/api/articles/1/comments')
+            .expect(400)
+            .send({
+                username: "rogersop"
+            })
+            .then((response) => {
+                const msg = response.body.msg;
+                expect(msg).toBe('Request body is missing required field(s)');
+            })
+        })
+        test('status: 400 when passed an empty body property', () => {
+            return request(app)
+            .post('/api/articles/1/comments')
+            .expect(400)
+            .send({
+                username: "rogersop",
+                body: ""
+            })
+            .then((response) => {
+                const msg = response.body.msg;
+                expect(msg).toBe('Body property cannot be empty');
+            })
+        })
+        test('status: 401 when passed a username that does not exist in the users database', () => {
+            return request(app)
+            .post('/api/articles/1/comments')
+            .expect(401)
+            .send({
+                username: "ScottChegg",
+                body: "The Gaviscon is all gone"
+            })
+            .then((response) => {
+                const msg = response.body.msg;
+                expect(msg).toBe('Username does not exist');
             })
         })
     })

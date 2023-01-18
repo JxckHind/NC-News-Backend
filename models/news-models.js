@@ -40,7 +40,31 @@ const fetchArticlesById = (article_id) => {
         if (response.rowCount === 0) {
             return Promise.reject({status: 404, msg: 'article_id does not exist'});
         } else {
-            return response.rows;
+            return response.rows[0];
+        }
+    })
+}
+
+const addCommentById = (article_id, newComment) => {
+
+    const newCommentData = [
+        newComment.body,
+        newComment.username,
+        Number(article_id),
+    ]
+
+    const newCommentQuery = `
+    INSERT INTO comments (body, author, article_id) 
+    VALUES ($1, $2, $3) 
+    RETURNING *
+    `;
+
+    return db.query(newCommentQuery, newCommentData).then((response) => {
+        const result = response.rows[0];
+        if (result.body.length === 0) {
+            return Promise.reject({status: 400, msg: 'Body property cannot be empty'});
+        } else {
+            return result;  
         }
     })
 }
@@ -62,5 +86,6 @@ module.exports = {
     fetchTopics,
     fetchArticles,
     fetchArticlesById,
-    fetchCommentsById
+    fetchCommentsById,
+    addCommentById
 }

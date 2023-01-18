@@ -9,7 +9,7 @@ exports.checkArticleExists = (article_id) => {
 
     return db.query(queryString, [article_id]).then((response) => {
         if (response.rowCount === 0) {
-            return true;
+            return false;
         }
     })
 }

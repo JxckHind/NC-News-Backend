@@ -1,4 +1,4 @@
-const { fetchTopics, fetchArticles, fetchArticlesById, checkCommentExists, fetchCommentsById } = require("../models/news-models");
+const { fetchTopics, fetchArticles, fetchArticlesById, fetchCommentsById, addCommentById } = require("../models/news-models");
 const { checkArticleExists } = require("./utils");
 
 const getTopics = (req, res, next) => {
@@ -33,7 +33,7 @@ const getCommentsById = (req, res, next) => {
     const {article_id} = req.params;
     checkArticleExists(article_id)
     .then((response) => {
-        if (response === true) {
+        if (response === false) {
             return Promise.reject({status: 404, msg: 'article_id does not exist'});
         } else {
             return fetchCommentsById(article_id);
@@ -47,9 +47,29 @@ const getCommentsById = (req, res, next) => {
     })
 }
 
+const postNewComment = (req, res, next) => {
+    const {article_id} = req.params;
+    const newComment = req.body;
+    checkArticleExists(article_id)
+    .then((response) => {
+        if (response === false) {
+            return Promise.reject({status: 404, msg: 'article_id does not exist'})
+        } else {
+            return addCommentById(article_id, newComment); 
+        }
+    })
+    .then((comment) => {
+        res.status(201).send({comment});
+    })
+    .catch((err) => {
+        next(err);
+    })
+}
+
 module.exports = {
     getTopics,
     getArticles,
     getArticlesById,
-    getCommentsById
+    getCommentsById,
+    postNewComment
 }
