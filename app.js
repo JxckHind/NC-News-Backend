@@ -24,8 +24,15 @@ app.use((err, req, res, next) => {
     }
 })
 app.use((err, req, res, next) => {
+    if (err.code === '23502') {
+        res.status(400).send({msg: 'Request body is missing required field(s)'});
+    } else {
+        next(err);   
+    }
+})
+app.use((err, req, res, next) => {
     if (err.code === '23503') {
-        res.status(422).send({msg: 'Username does not exist'});
+        res.status(401).send({msg: 'Username does not exist'});
     } else {
         next(err);   
     }

@@ -220,7 +220,7 @@ describe('app', () => {
             })
         })
     })
-    describe.only('POST /api/articles/:article_id/comments', () => {
+    describe('POST /api/articles/:article_id/comments', () => {
         test('status: 201', () => {
             return request(app)
             .post('/api/articles/1/comments')
@@ -290,30 +290,86 @@ describe('app', () => {
                 expect(result.article_id).toBe(1);
             })
         })
-        test('status: 400 when passed an empty body', () => {
+        test('status: 201 and responds with a nested comment object with the correct values and ignores any unnessesary properties added to the request', () => {
             return request(app)
-                .post('/api/articles/1/comments')
-                .expect(400)
-                .send({
-                    username: "rogersop",
-                    body: ""
-                })
-                .then((response) => {
-                    const msg = response.body.msg;
-                    expect(msg).toBe('Body cannot be empty - please enter the body');
+            .post('/api/articles/1/comments')
+            .expect(201)
+            .send({
+                username: "rogersop",
+                body: "The Gaviscon is all gone",
+                votes: 10000,
+                article_id: 123
+            })
+            .then((response) => {
+                const result = response.body.comment;
+                expect(result.author).toBe("rogersop")
+                expect(result.body).toBe("The Gaviscon is all gone");
+                expect(result.votes).toBe(0);
+                expect(result.article_id).toBe(1);
             })
         })
-        test('status: 422 when passed a username that doesnt exist in the users database', () => {
+        test('status: 400 when passed a bad article_id', () => {
             return request(app)
-                .post('/api/articles/1/comments')
-                .expect(422)
-                .send({
-                    username: "ScottChegg",
-                    body: "The Gaviscon is all gone"
-                })
-                .then((response) => {
-                    const msg = response.body.msg;
-                    expect(msg).toBe('Username does not exist');
+            .post('/api/articles/dog/comments')
+            .expect(400)
+            .send({
+                username: "rogersop",
+                body: "The Gaviscon is all gone"
+            })
+            .then((response) => {
+                const msg = response.body.msg;
+                expect(msg).toBe('Invalid article_id');
+            })
+        })
+        test('status: 404 when passed an article_id that doesnt exist in the database', () => {
+            return request(app)
+            .post('/api/articles/99999/comments')
+            .expect(404)
+            .send({
+                username: "rogersop",
+                body: "The Gaviscon is all gone"
+            })
+            .then((response) => {
+                const msg = response.body.msg;
+                expect(msg).toBe('article_id does not exist');
+            })
+        })
+        test('status: 400 when the request body is empty or missing a required field', () => {
+            return request(app)
+            .post('/api/articles/1/comments')
+            .expect(400)
+            .send({
+                username: "rogersop"
+            })
+            .then((response) => {
+                const msg = response.body.msg;
+                expect(msg).toBe('Request body is missing required field(s)');
+            })
+        })
+        test('status: 400 when passed an empty body property', () => {
+            return request(app)
+            .post('/api/articles/1/comments')
+            .expect(400)
+            .send({
+                username: "rogersop",
+                body: ""
+            })
+            .then((response) => {
+                const msg = response.body.msg;
+                expect(msg).toBe('Body property cannot be empty');
+            })
+        })
+        test('status: 401 when passed a username that does not exist in the users database', () => {
+            return request(app)
+            .post('/api/articles/1/comments')
+            .expect(401)
+            .send({
+                username: "ScottChegg",
+                body: "The Gaviscon is all gone"
+            })
+            .then((response) => {
+                const msg = response.body.msg;
+                expect(msg).toBe('Username does not exist');
             })
         })
     })

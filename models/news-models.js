@@ -45,7 +45,7 @@ const fetchArticlesById = (article_id) => {
     })
 }
 
-const addNewComment = (article_id, newComment) => {
+const addCommentById = (article_id, newComment) => {
 
     const newCommentData = [
         newComment.body,
@@ -62,7 +62,7 @@ const addNewComment = (article_id, newComment) => {
     return db.query(newCommentQuery, newCommentData).then((response) => {
         const result = response.rows[0];
         if (result.body.length === 0) {
-            return Promise.reject({status: 400, msg: 'Body cannot be empty - please enter the body'});
+            return Promise.reject({status: 400, msg: 'Body property cannot be empty'});
         } else {
             return result;  
         }
@@ -73,5 +73,5 @@ module.exports = {
     fetchTopics,
     fetchArticles,
     fetchArticlesById,
-    addNewComment
+    addCommentById
 }
