@@ -35,7 +35,7 @@ const postNewComment = (req, res, next) => {
     const newComment = req.body;
     checkArticleExists(article_id)
     .then((response) => {
-        if (response === true) {
+        if (response === false) {
             return Promise.reject({status: 404, msg: 'article_id does not exist'})
         } else {
             return addCommentById(article_id, newComment); 
