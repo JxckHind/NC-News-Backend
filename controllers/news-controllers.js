@@ -1,4 +1,5 @@
 const { fetchTopics, fetchArticles, fetchArticlesById, updateVotesById } = require("../models/news-models");
+const { checkArticleExists } = require("./utils");
 
 const getTopics = (req, res, next) => {
     fetchTopics().then((topics) => {

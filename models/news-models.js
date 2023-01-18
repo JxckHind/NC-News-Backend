@@ -60,7 +60,11 @@ const updateVotesById = (article_id, inc_votes) => {
     `;
 
     return db.query(queryString, newVoteData).then((response) => {
-        return response.rows[0];
+        if (response.rowCount === 0) {
+            return Promise.reject({status: 404, msg: 'article_id does not exist'})
+        } else {
+            return response.rows[0];  
+        }
     })
 }
 
