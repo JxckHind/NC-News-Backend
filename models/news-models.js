@@ -45,6 +45,19 @@ const fetchArticlesById = (article_id) => {
     })
 }
 
+const fetchCommentsById = (article_id) => {
+
+    let queryString = `
+    SELECT * FROM comments
+    WHERE comments.article_id=$1
+    ORDER BY created_at DESC
+    `;
+
+    return db.query(queryString, [article_id]).then((response) => {
+        return response.rows;
+    })
+}
+
 const addCommentById = (article_id, newComment) => {
 
     const newCommentData = [
@@ -69,16 +82,26 @@ const addCommentById = (article_id, newComment) => {
     })
 }
 
-const fetchCommentsById = (article_id) => {
+const updateVotesById = (article_id, inc_votes) => {
+
+    const newVoteData = [
+        article_id,
+        inc_votes
+    ]
 
     let queryString = `
-    SELECT * FROM comments
-    WHERE comments.article_id=$1
-    ORDER BY created_at DESC
+    UPDATE articles
+    SET votes = votes + $2
+    WHERE articles.article_id = $1
+    RETURNING *
     `;
 
-    return db.query(queryString, [article_id]).then((response) => {
-        return response.rows;
+    return db.query(queryString, newVoteData).then((response) => {
+        if (response.rowCount === 0) {
+            return Promise.reject({status: 404, msg: 'article_id does not exist'})
+        } else {
+            return response.rows[0];  
+        }
     })
 }
 
@@ -87,5 +110,6 @@ module.exports = {
     fetchArticles,
     fetchArticlesById,
     fetchCommentsById,
-    addCommentById
+    addCommentById,
+		updateVotesById
 }

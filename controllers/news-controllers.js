@@ -1,4 +1,4 @@
-const { fetchTopics, fetchArticles, fetchArticlesById, fetchCommentsById, addCommentById } = require("../models/news-models");
+const { fetchTopics, fetchArticles, fetchArticlesById, fetchCommentsById, addCommentById, updateVotesById } = require("../models/news-models");
 const { checkArticleExists } = require("./utils");
 
 const getTopics = (req, res, next) => {
@@ -66,10 +66,22 @@ const postNewComment = (req, res, next) => {
     })
 }
 
+const updateArticleVotes = (req, res, next) => {
+    const {article_id} = req.params;
+    const {inc_votes} = req.body;
+    updateVotesById(article_id, inc_votes).then((article) => {
+        res.status(200).send({article});
+    })
+    .catch((err) => {
+        next(err);
+    })
+}
+
 module.exports = {
     getTopics,
     getArticles,
     getArticlesById,
     getCommentsById,
-    postNewComment
+    postNewComment,
+    updateArticleVotes
 }

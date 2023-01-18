@@ -213,7 +213,7 @@ describe('app', () => {
             .expect(400)
             .then((response) => {
                 const msg = response.body.msg;
-                expect(msg).toBe('Invalid article_id');
+                expect(msg).toBe('Invalid input - enter integer instead of string');
             })
         })
         test('status: 404 when passed an article_id that doesnt exist in the database', () => {
@@ -470,6 +470,128 @@ describe('app', () => {
             .then((response) => {
                 const msg = response.body.msg;
                 expect(msg).toBe('Username does not exist');
+            })
+        })
+    describe('PATCH /api/articles/:article_id', () => {
+        test('status: 200', () => {
+            return request(app)
+            .patch('/api/articles/1')
+            .expect(200)
+            .send({
+                inc_votes: 10
+            })
+        })
+        test('status: 200 and responds with an object', () => {
+            return request(app)
+            .patch('/api/articles/1')
+            .expect(200)
+            .send({
+                inc_votes: 10
+            })
+            .then((response) => {
+                const result = response.body;
+                expect(typeof result).toBe('object');
+            })
+        })
+        test('status: 200 and responds with an object with a key of article', () => {
+            return request(app)
+            .patch('/api/articles/1')
+            .expect(200)
+            .send({
+                inc_votes: 10
+            })
+            .then((response) => {
+                const result = response.body;
+                expect(result).toHaveProperty('article');
+            })
+        })
+        test('status: 200 and responds with a nested article object with the correct keys', () => {
+            return request(app)
+            .patch('/api/articles/1')
+            .expect(200)
+            .send({
+                inc_votes: 10
+            })
+            .then((response) => {
+                const result = response.body.article;
+                expect(result).toHaveProperty("article_id");
+                expect(result).toHaveProperty("title");
+                expect(result).toHaveProperty("topic");
+                expect(result).toHaveProperty("author");
+                expect(result).toHaveProperty("body");
+                expect(result).toHaveProperty("created_at");
+                expect(result).toHaveProperty("votes");
+                expect(result).toHaveProperty("article_img_url");
+            })
+        })
+        test('status: 200 and responds with a nested article object with the updated votes value when newVote is a positive integer', () => {
+            return request(app)
+            .patch('/api/articles/1')
+            .expect(200)
+            .send({
+                inc_votes: 10
+            })
+            .then((response) => {
+                const result = response.body.article;
+                expect(result.votes).toBe(110);
+            })
+        })
+        test('status: 200 and responds with a nested article object with the updated votes value when newVote is a negative integer', () => {
+            return request(app)
+            .patch('/api/articles/1')
+            .expect(200)
+            .send({
+                inc_votes: -25
+            })
+            .then((response) => {
+                const result = response.body.article;
+                expect(result.votes).toBe(75);
+            })
+        })
+        test('status: 400 when passed a bad article_id', () => {
+            return request(app)
+            .patch('/api/articles/dog')
+            .expect(400)
+            .send({
+                inc_votes: 10
+            })
+            .then((response) => {
+                const msg = response.body.msg;
+                expect(msg).toBe('Invalid input - enter integer instead of string');
+            })
+        })
+        test('status: 404 when passed an article_id that doesnt exist in the database', () => {
+            return request(app)
+            .patch('/api/articles/99999')
+            .expect(404)
+            .send({
+                inc_votes: 10
+            })
+            .then((response) => {
+                const msg = response.body.msg;
+                expect(msg).toBe('article_id does not exist');
+            })
+        })
+        test('status: 400 when the request body is empty', () => {
+            return request(app)
+            .patch('/api/articles/1')
+            .expect(400)
+            .send({})
+            .then((response) => {
+                const msg = response.body.msg;
+                expect(msg).toBe('Request body cannot be empty');
+            })
+        })
+        test('status: 400 when inc_votes is invalid', () => {
+            return request(app)
+            .patch('/api/articles/1')
+            .expect(400)
+            .send({
+                inc_votes: "dog"
+            })
+            .then((response) => {
+                const msg = response.body.msg;
+                expect(msg).toBe('Invalid input - enter integer instead of string');
             })
         })
     })
