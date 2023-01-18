@@ -40,7 +40,67 @@ const fetchArticlesById = (article_id) => {
         if (response.rowCount === 0) {
             return Promise.reject({status: 404, msg: 'article_id does not exist'});
         } else {
-            return response.rows;
+            return response.rows[0];
+        }
+    })
+}
+
+const fetchCommentsById = (article_id) => {
+
+    let queryString = `
+    SELECT * FROM comments
+    WHERE comments.article_id=$1
+    ORDER BY created_at DESC
+    `;
+
+    return db.query(queryString, [article_id]).then((response) => {
+        return response.rows;
+    })
+}
+
+const addCommentById = (article_id, newComment) => {
+
+    const newCommentData = [
+        newComment.body,
+        newComment.username,
+        Number(article_id),
+    ]
+
+    const newCommentQuery = `
+    INSERT INTO comments (body, author, article_id) 
+    VALUES ($1, $2, $3) 
+    RETURNING *
+    `;
+
+    return db.query(newCommentQuery, newCommentData).then((response) => {
+        const result = response.rows[0];
+        if (result.body.length === 0) {
+            return Promise.reject({status: 400, msg: 'Body property cannot be empty'});
+        } else {
+            return result;  
+        }
+    })
+}
+
+const updateVotesById = (article_id, inc_votes) => {
+
+    const newVoteData = [
+        article_id,
+        inc_votes
+    ]
+
+    let queryString = `
+    UPDATE articles
+    SET votes = votes + $2
+    WHERE articles.article_id = $1
+    RETURNING *
+    `;
+
+    return db.query(queryString, newVoteData).then((response) => {
+        if (response.rowCount === 0) {
+            return Promise.reject({status: 404, msg: 'article_id does not exist'})
+        } else {
+            return response.rows[0];  
         }
     })
 }
@@ -60,5 +120,8 @@ module.exports = {
     fetchTopics,
     fetchArticles,
     fetchArticlesById,
+    fetchCommentsById,
+    addCommentById,
+		updateVotesById,
     fetchUsers
 }
