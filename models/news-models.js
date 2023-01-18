@@ -45,8 +45,22 @@ const fetchArticlesById = (article_id) => {
     })
 }
 
+const fetchCommentsById = (article_id) => {
+
+    let queryString = `
+    SELECT * FROM comments
+    WHERE comments.article_id=$1
+    ORDER BY created_at DESC
+    `;
+
+    return db.query(queryString, [article_id]).then((response) => {
+        return response.rows;
+    })
+}
+
 module.exports = {
     fetchTopics,
     fetchArticles,
-    fetchArticlesById
+    fetchArticlesById,
+    fetchCommentsById
 }
