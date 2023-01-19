@@ -120,12 +120,35 @@ const fetchUsers = () => {
     })
 }
 
+const fetchComments = () => {
+    
+    const queryString = `
+    SELECT * FROM comments
+    `;
+
+    return db.query(queryString).then((response) => {
+        return (response.rows);
+    })
+}
+
+const deleteCommentData = (comment_id) => {
+
+    const queryString = `
+    DELETE FROM comments
+    WHERE comments.comment_id = $1
+    `;
+
+    return db.query(queryString, [comment_id]);
+}
+
 module.exports = {
     fetchTopics,
     fetchArticles,
     fetchArticlesById,
     fetchCommentsById,
     addCommentById,
-		updateVotesById,
-    fetchUsers
+	updateVotesById,
+    fetchUsers,
+    fetchComments,
+    deleteCommentData
 }
