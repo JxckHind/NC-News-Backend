@@ -645,4 +645,46 @@ describe('app', () => {
              })
         })
     })
+    describe('GET /api' ,() => {
+        test('status: 200', () => {
+            return request(app)
+            .get('/api')
+            .expect(200);
+        })
+        test('status: 200 and responds with an object', () => {
+            return request(app)
+            .get('/api')
+            .expect(200)
+            .then((response) => {
+                const result = response.body;
+                expect(typeof result).toBe('object');
+            })
+        })
+        test('status: 200 and responds with an object with a key of endpoints', () => {
+            return request(app)
+            .get('/api')
+            .expect(200)
+            .then((response) => {
+                const result = response.body;
+                expect(result).toHaveProperty('endpoints');
+            }) 
+        })
+        test('status: 200 and responds with a nested object containing all of the endpoints from the API as keys', () => {
+            return request(app)
+            .get('/api')
+            .expect(200)
+            .then((response) => {
+                const result = response.body.endpoints;
+                expect(result).toHaveProperty('GET /api');
+                expect(result).toHaveProperty('GET /api/topics');
+                expect(result).toHaveProperty('GET /api/articles');
+                expect(result).toHaveProperty('GET /api/articles/:article_id');
+                expect(result).toHaveProperty('GET /api/articles/:article_id/comments');
+                expect(result).toHaveProperty('POST /api/articles/:article_id/comments');
+                expect(result).toHaveProperty('PATCH /api/articles/:article_id');
+                expect(result).toHaveProperty('GET /api/users');
+                expect(result).toHaveProperty('DELETE /api/comments/:comment_id');
+            }) 
+        })
+    })
 })

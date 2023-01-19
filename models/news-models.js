@@ -1,4 +1,5 @@
 const db  = require("../db/connection");
+const fs = require("fs/promises");
 
 const fetchTopics = () => {
     
@@ -120,12 +121,17 @@ const fetchUsers = () => {
     })
 }
 
+const fetchEndPoints = () => {
+    return fs.readFile("./endpoints.json", "utf-8");
+}
+
 module.exports = {
     fetchTopics,
     fetchArticles,
     fetchArticlesById,
     fetchCommentsById,
     addCommentById,
-		updateVotesById,
-    fetchUsers
+	updateVotesById,
+    fetchUsers,
+    fetchEndPoints
 }
