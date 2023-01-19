@@ -1,5 +1,5 @@
 const { fetchTopics, fetchArticles, fetchArticlesById, fetchCommentsById, addCommentById, updateVotesById, fetchUsers } = require("../models/news-models");
-const { checkArticleExists } = require("./utils");
+const { checkArticleExists, checkTopicExists } = require("./utils");
 
 const getTopics = (req, res, next) => {
     fetchTopics().then((topics) => {
@@ -11,7 +11,16 @@ const getTopics = (req, res, next) => {
 }
 
 const getArticles = (req, res, next) => {
-    fetchArticles().then((articles) => {
+    const {sort_by, order, topic} = req.query;
+    checkTopicExists(topic)
+    .then((response) => {
+        if (response === false && topic !== undefined) {
+            return Promise.reject({status: 404, msg: 'topic does not exist'});
+        } else {
+            return fetchArticles(sort_by, order, topic);
+        }
+    })
+    .then((articles) => {
         res.status(200).send({articles});
     })
     .catch((err) => {
