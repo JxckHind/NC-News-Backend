@@ -644,4 +644,99 @@ describe('app', () => {
              })
         })
     })
+    describe('GET /api/comments', () => {
+        test('status: 200', () => {
+            return request(app)
+            .get('/api/comments')
+            .expect(200);
+        })
+        test('status: 200 and responds with an object', () => {
+            return request(app)
+            .get('/api/comments')
+            .expect(200)
+            .then((response) => {
+                const result = response.body;
+                expect(typeof result).toBe('object');
+            })
+        })
+        test('status: 200 and responds with an object with a key of comments', () => {
+            return request(app)
+            .get('/api/comments')
+            .expect(200)
+            .then((response) => {
+                const result = response.body;
+                expect(result).toHaveProperty('comments');
+            }) 
+        })
+        test('status: 200 and responds with a nested array containing all of the comment objects', () => {
+            return request(app)
+            .get('/api/comments')
+            .expect(200)
+            .then((response) => {
+                const result = response.body.comments;
+                expect(Array.isArray(result)).toBe(true);                
+                expect(result).toHaveLength(18);
+                result.forEach((comment) => {
+                    expect(typeof comment).toBe('object');
+                })
+             })
+        })
+        test('status: 200 and responds with a nested array containing all of the comment objects with the correct keys', () => {
+            return request(app)
+            .get('/api/comments')
+            .expect(200)
+            .then((response) => {
+                const result = response.body.comments;
+                result.forEach((comment) => {
+                    expect(comment).toHaveProperty("comment_id");
+                    expect(comment).toHaveProperty("body");
+                    expect(comment).toHaveProperty("votes");
+                    expect(comment).toHaveProperty("author");
+                    expect(comment).toHaveProperty("article_id");
+                    expect(comment).toHaveProperty("created_at");
+                })
+             })
+        })
+    })
+    describe('DELETE /api/comments/:comment_id', () => {
+        test('status: 204', () => {
+            return request(app)
+            .delete('/api/comments/1')
+            .expect(204)
+        })
+        test('status: 204 and deletes the specified comment ', () => {
+            return request(app)
+            .delete('/api/comments/1')
+            .expect(204)
+            .then(() => {
+                return request(app)
+                .get('/api/comments')
+            })
+            .then((response) => {
+                const comments = response.body.comments;
+                let result = comments.filter((comment) => {
+                    return comment.comment_id === 1;
+                })
+                expect(result.length).toEqual(0);
+            })
+        })
+        test('status: 400 when passed a bad comment_id', () => {
+            return request(app)
+            .delete('/api/comments/dog')
+            .expect(400)
+            .then((response) => {
+                const msg = response.body.msg;
+                expect(msg).toBe('Invalid input - enter integer instead of string');
+            })
+        })
+        test('status: 404 when passed an comment_id that doesnt exist in the database', () => {
+            return request(app)
+            .delete('/api/comments/99999')
+            .expect(404)
+            .then((response) => {
+                const msg = response.body.msg;
+                expect(msg).toBe('comment_id does not exist');
+            })
+        })
+    })
 })

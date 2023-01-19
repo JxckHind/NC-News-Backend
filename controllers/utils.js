@@ -13,3 +13,16 @@ exports.checkArticleExists = (article_id) => {
         }
     })
 }
+
+exports.checkCommentExists = (comment_id) => {
+    let queryString = `
+    SELECT comment_id FROM comments
+    WHERE comments.comment_id=$1
+    `;
+
+    return db.query(queryString, [comment_id]).then((response) => {
+        if (response.rowCount === 0) {
+            return false;
+        }
+    })
+}
