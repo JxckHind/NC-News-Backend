@@ -32,11 +32,7 @@ const fetchArticles = (sort_by = 'created_at', order = 'DESC', topic) => {
     ORDER BY ${sort_by} ${order}`;
 
     return db.query(queryString, sqlQuery).then((response) => {
-        if (response.rowCount === 0) {
-            return Promise.reject({status: 422, msg: 'No articles associated with this topic'})
-        } else {
-            return response.rows;
-        }
+        return response.rows;
     })
 }
 

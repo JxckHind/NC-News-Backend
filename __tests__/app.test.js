@@ -216,6 +216,16 @@ describe('app', () => {
                 expect(dates).toBeSorted();               
             })
         })
+        test('status: 200 and responds with an empty nested array when there are no articles associated with a specific topic', () => {
+            return request(app)
+            .get('/api/articles?topic=paper')
+            .expect(200)
+            .then((response) => {
+                const result = response.body.articles;
+                expect(Array.isArray(result)).toBe(true);                
+                expect(result).toHaveLength(0);
+             })
+        })
         test('status: 404 when passed an sort_by query that doesnt exist in the database', () => {
             return request(app)
             .get('/api/articles?sort_by=dogs')
@@ -241,15 +251,6 @@ describe('app', () => {
             .then((response) => {
                 const msg = response.body.msg;
                 expect(msg).toBe('topic does not exist');
-            })
-        })
-        test('status: 422 when passed a topic that has no articles associated with it', () => {
-            return request(app)
-            .get('/api/articles?topic=paper')
-            .expect(422)
-            .then((response) => {
-                const msg = response.body.msg;
-                expect(msg).toBe('No articles associated with this topic');
             })
         })
     })
