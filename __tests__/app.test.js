@@ -196,6 +196,7 @@ describe('app', () => {
                 expect(result).toHaveProperty("created_at");
                 expect(result).toHaveProperty("votes");
                 expect(result).toHaveProperty("article_img_url");
+                expect(result).toHaveProperty("comment_count");
              })
         })
         test('status: 200 and responds with a nested article object with the correct article_id', () => {
