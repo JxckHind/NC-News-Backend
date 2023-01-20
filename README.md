@@ -32,7 +32,7 @@ You can view all of the accessible endpoints by looking in the endpoints.json fi
 
 ## Accessing the databases:
 
-- Once the repo has been sucessfully cloned, n order to connect to the two databases involved in this project on your local machine you must first create the environment variables yourself.
+- Once the repo has been sucessfully cloned, in order to connect to the two databases involved in this project on your local machine you must first create the environment variables yourself.
 - You will need to create two `.env files`, one named `.env.test` and another `.env.development`:
 
   ```
