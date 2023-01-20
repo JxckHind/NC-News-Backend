@@ -1,5 +1,5 @@
-const { fetchTopics, fetchArticles, fetchArticlesById, fetchCommentsById, addCommentById, updateVotesById, fetchUsers, fetchComments, deleteCommentData } = require("../models/news-models");
-const { checkArticleExists, checkCommentExists } = require("./utils");
+const { fetchTopics, fetchArticles, fetchArticlesById, fetchCommentsById, addCommentById, updateVotesById, fetchUsers, fetchComments, deleteCommentData, fetchEndPoints } = require("../models/news-models");
+const { checkArticleExists, checkTopicExists, checkCommentExists } = require("./utils");
 
 const getTopics = (req, res, next) => {
     fetchTopics().then((topics) => {
@@ -122,6 +122,16 @@ const deleteCommentById = (req, res, next) => {
     })
 }
 
+const getEndPoints = (req, res, next) => {
+    fetchEndPoints().then((endpoints) => {
+        const result = JSON.parse(endpoints);
+        res.status(200).send({endpoints : result});
+    })
+    .catch((err) => {
+        next(err);
+    })
+}
+
 module.exports = {
     getTopics,
     getArticles,
@@ -131,5 +141,6 @@ module.exports = {
     updateArticleVotes,
     getUsers,
     getComments,
-    deleteCommentById
+    deleteCommentById,
+    getEndPoints
 }
