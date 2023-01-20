@@ -139,13 +139,7 @@ describe('app', () => {
                 const dates = result.map((article) => {
                     return article.created_at;
                 })
-                let isSorted = true;
-                for(let i = 1; i < dates.length; i++) {
-                    if(dates[i - 1] <= dates[i]) {
-                        isSorted = false;
-                    }
-                }
-                expect(isSorted).toBe(true);
+                expect(dates).toBeSorted({descending: true});               
             })
         })
     })
