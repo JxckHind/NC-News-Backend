@@ -4,11 +4,7 @@ This project is a 'News API'. It is built using Node.js, with Express.js for the
 
 You can view all of the accessible endpoints by looking in the endpoints.json file. Altervatively you can make a GET request to https://jack-nc-news-ap.onrender.com/api which will list all of the available endpoints you can interact with.
 
-<br />
-
 ## Link To Hosted Version: https://jack-nc-news-ap.onrender.com
-
-<br />
 
 # Setup
 
@@ -53,7 +49,6 @@ You can view all of the accessible endpoints by looking in the endpoints.json fi
 ## Database set-up and seeding:
 
 - Before using or testing the application, you will need to set up the database and then seed it with the data. In your teminal please enter:
-
   ```
   $ npm run setup-dbs
   $ npm run seed
@@ -63,19 +58,15 @@ You can view all of the accessible endpoints by looking in the endpoints.json fi
 
 - Jest is the framework used to test this application.
 - To run the tests, in your teminal please enter:
-
   ```
   $ npm test
   ```
-
 - The database must be re-seeded before every test. This is built into the 'app.test' file and so this should be done automatically everytime the test command is ran.
 
 ## Development mode:
 
 - To run the application in development mode, in your teminal please enter:
-
   ```
   $ node app.listen.js
   ```
-
 - This will start a server. You can now make requests to your localhost on the specified port and view all of the accessible endpoints.
