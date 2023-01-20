@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const { getTopics, getArticles, getArticlesById, getCommentsById, postNewComment, updateArticleVotes, getUsers, getEndPoints } = require("./controllers/news-controllers");
+const { getTopics, getArticles, getArticlesById, getCommentsById, postNewComment, updateArticleVotes, getUsers, getComments, deleteCommentById, getEndPoints } = require("./controllers/news-controllers");
 app.use(express.json()); 
 
 app.get('/api/topics', getTopics);
@@ -8,12 +8,15 @@ app.get('/api/articles', getArticles);
 app.get('/api/articles/:article_id', getArticlesById);
 app.get('/api/articles/:article_id/comments', getCommentsById);
 app.get('/api/users', getUsers);
+app.get('/api/comments', getComments);
 app.get('/api', getEndPoints);
 
 app.use(express.json())
 app.post('/api/articles/:article_id/comments', postNewComment);
 
-app.patch('/api/articles/:article_id', updateArticleVotes)
+app.patch('/api/articles/:article_id', updateArticleVotes);
+
+app.delete('/api/comments/:comment_id', deleteCommentById);
 
 app.use((err, req, res, next) => {
     if (err.status && err.msg) {
@@ -39,6 +42,20 @@ app.use((err, req, res, next) => {
 app.use((err, req, res, next) => {
     if (err.code === '23503') {
         res.status(401).send({msg: 'Username does not exist'});
+    } else {
+        next(err);   
+    }
+})
+app.use((err, req, res, next) => {
+    if (err.code === '42601') {
+        res.status(400).send({msg: 'Invalid order query'});
+    } else {
+        next(err);   
+    }
+})
+app.use((err, req, res, next) => {
+    if (err.code === '42703') {
+        res.status(404).send({msg: 'Column does not exist'});
     } else {
         next(err);   
     }

@@ -1,5 +1,5 @@
-const { fetchTopics, fetchArticles, fetchArticlesById, fetchCommentsById, addCommentById, updateVotesById, fetchUsers, fetchEndPoints } = require("../models/news-models");
-const { checkArticleExists } = require("./utils");
+const { fetchTopics, fetchArticles, fetchArticlesById, fetchCommentsById, addCommentById, updateVotesById, fetchUsers, fetchComments, deleteCommentData, fetchEndPoints } = require("../models/news-models");
+const { checkArticleExists, checkTopicExists, checkCommentExists } = require("./utils");
 
 const getTopics = (req, res, next) => {
     fetchTopics().then((topics) => {
@@ -11,7 +11,16 @@ const getTopics = (req, res, next) => {
 }
 
 const getArticles = (req, res, next) => {
-    fetchArticles().then((articles) => {
+    const {sort_by, order, topic} = req.query;
+    checkTopicExists(topic)
+    .then((response) => {
+        if (response === false && topic !== undefined) {
+            return Promise.reject({status: 404, msg: 'topic does not exist'});
+        } else {
+            return fetchArticles(sort_by, order, topic);
+        }
+    })
+    .then((articles) => {
         res.status(200).send({articles});
     })
     .catch((err) => {
@@ -86,6 +95,33 @@ const getUsers = (req, res, next) => {
     })
 }
 
+const getComments = (req, res, next) => {
+    fetchComments().then((comments) => {
+        res.status(200).send({comments});
+    })
+    .catch((err) => {
+        next(err);
+    })
+}
+
+const deleteCommentById = (req, res, next) => {
+    const {comment_id} = req.params;
+    checkCommentExists(comment_id)
+    .then((response) => {
+        if (response === false) {
+            return Promise.reject({status: 404, msg: 'comment_id does not exist'})
+        } else {
+            return deleteCommentData(comment_id);
+        }
+    })
+    .then(() => {
+        res.status(204).send();
+    })
+    .catch((err) => {
+        next(err);
+    })
+}
+
 const getEndPoints = (req, res, next) => {
     fetchEndPoints().then((endpoints) => {
         const result = JSON.parse(endpoints);
@@ -104,5 +140,7 @@ module.exports = {
     postNewComment,
     updateArticleVotes,
     getUsers,
+    getComments,
+    deleteCommentById,
     getEndPoints
 }
