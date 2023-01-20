@@ -39,8 +39,12 @@ const fetchArticles = (sort_by = 'created_at', order = 'DESC', topic) => {
 const fetchArticlesById = (article_id) => {
 
     let queryString = `
-    SELECT * FROM articles
+    SELECT articles.*,
+    COUNT(comments.article_id) AS comment_count 
+    FROM articles
+    LEFT JOIN comments ON articles.article_id = comments.article_id 
     WHERE articles.article_id=$1
+    GROUP BY articles.article_id
     `;
 
     return db.query(queryString, [article_id]).then((response) => {
@@ -123,12 +127,35 @@ const fetchUsers = () => {
     })
 }
 
+const fetchComments = () => {
+    
+    const queryString = `
+    SELECT * FROM comments
+    `;
+
+    return db.query(queryString).then((response) => {
+        return (response.rows);
+    })
+}
+
+const deleteCommentData = (comment_id) => {
+
+    const queryString = `
+    DELETE FROM comments
+    WHERE comments.comment_id = $1
+    `;
+
+    return db.query(queryString, [comment_id]);
+}
+
 module.exports = {
     fetchTopics,
     fetchArticles,
     fetchArticlesById,
     fetchCommentsById,
     addCommentById,
-		updateVotesById,
-    fetchUsers
+	updateVotesById,
+    fetchUsers,
+    fetchComments,
+    deleteCommentData
 }
