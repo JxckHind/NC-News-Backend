@@ -45,6 +45,20 @@ app.use((err, req, res, next) => {
         next(err);   
     }
 })
+app.use((err, req, res, next) => {
+    if (err.code === '42601') {
+        res.status(400).send({msg: 'Invalid order query'});
+    } else {
+        next(err);   
+    }
+})
+app.use((err, req, res, next) => {
+    if (err.code === '42703') {
+        res.status(404).send({msg: 'Column does not exist'});
+    } else {
+        next(err);   
+    }
+})
 app.use((req, res, next) => {
     res.status(404).send({msg: "Path not found"});
 })

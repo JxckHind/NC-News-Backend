@@ -149,6 +149,111 @@ describe('app', () => {
             })
         })
     })
+    describe('GET /api/articles?queries', () => {
+        test('status: 200 and responds with a nested array containing all of the article objects sorted in descending date order and filtered by topic "mitch"', () => {
+            return request(app)
+            .get('/api/articles?topic=mitch')
+            .expect(200)
+            .then((response) => {
+                const result = response.body.articles;
+                const dates = result.map((comment) => {
+                    return comment.created_at;
+                })
+                expect(dates).toBeSorted({descending: true});
+                result.forEach((article) => {
+                    expect(article.topic).toBe('mitch');
+                })
+            })
+        })
+        test('status: 200 and responds with a nested array containing all of the article objects sorted in descending date order and filtered by topic "cats"', () => {
+            return request(app)
+            .get('/api/articles?topic=cats')
+            .expect(200)
+            .then((response) => {
+                const result = response.body.articles;
+                const dates = result.map((comment) => {
+                    return comment.created_at;
+                })
+                expect(dates).toBeSorted({descending: true});
+                result.forEach((article) => {
+                    expect(article.topic).toBe('cats');
+                })
+            })
+        })
+        test('status: 200 and responds with a nested array containing all of the article objects sorted in descending title order', () => {
+            return request(app)
+            .get('/api/articles?sort_by=title')
+            .expect(200)
+            .then((response) => {
+                const result = response.body.articles;
+                const titles = result.map((article) => {
+                    return article.title;
+                })
+                expect(titles).toBeSorted({descending: true});                
+            })
+        })
+        test('status: 200 and responds with a nested array containing all of the article objects sorted in descending author order', () => {
+            return request(app)
+            .get('/api/articles?sort_by=author')
+            .expect(200)
+            .then((response) => {
+                const result = response.body.articles;
+                const authors = result.map((article) => {
+                    return article.author;
+                })
+                expect(authors).toBeSorted({descending: true});                
+            })
+        })
+        test('status: 200 and responds with a nested array containing all of the article objects sorted in ascending date order', () => {
+            return request(app)
+            .get('/api/articles?order=asc')
+            .expect(200)
+            .then((response) => {
+                const result = response.body.articles;
+                const dates = result.map((comment) => {
+                    return comment.created_at;
+                })
+                expect(dates).toBeSorted();               
+            })
+        })
+        test('status: 200 and responds with an empty nested array when there are no articles associated with a specific topic', () => {
+            return request(app)
+            .get('/api/articles?topic=paper')
+            .expect(200)
+            .then((response) => {
+                const result = response.body.articles;
+                expect(Array.isArray(result)).toBe(true);                
+                expect(result).toHaveLength(0);
+             })
+        })
+        test('status: 404 when passed an sort_by query that doesnt exist in the database', () => {
+            return request(app)
+            .get('/api/articles?sort_by=dogs')
+            .expect(404)
+            .then((response) => {
+                const msg = response.body.msg;
+                expect(msg).toBe('Column does not exist');
+            })
+        })
+        test('status: 400 when passed a bad order query', () => {
+            return request(app)
+            .get('/api/articles?order=dogs')
+            .expect(400)
+            .then((response) => {
+                const msg = response.body.msg;
+                expect(msg).toBe('Invalid order query');
+            })
+        })
+        test('status: 404 when passed a topic that doesnt exist in the database', () => {
+            return request(app)
+            .get('/api/articles?topic=dogs')
+            .expect(404)
+            .then((response) => {
+                const msg = response.body.msg;
+                expect(msg).toBe('topic does not exist');
+            })
+        })
+    })
     describe('GET /api/articles/:article_id', () => {
         test('status: 200', () => {
             return request(app)

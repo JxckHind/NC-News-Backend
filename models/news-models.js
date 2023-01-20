@@ -7,24 +7,31 @@ const fetchTopics = () => {
     `;
 
     return db.query(queryString).then((response) => {
-        const result = response.rows;
-        return result;
+        return response.rows;
     })
 }
 
-const fetchArticles = (sort_by = 'created_at', order = 'DESC') => {
+const fetchArticles = (sort_by = 'created_at', order = 'DESC', topic) => {
+
+    const sqlQuery = []
 
     let queryString = `
     SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url,
     COUNT(comments.article_id) AS comment_count 
     FROM articles
     LEFT JOIN comments ON articles.article_id = comments.article_id 
-    GROUP BY articles.article_id
     `;
 
-    queryString += `ORDER BY ${sort_by} ${order}`;
+    if (topic !== undefined) {
+        sqlQuery.push(topic);
+        queryString += `WHERE articles.topic = $1`;
+    }
 
-    return db.query(queryString).then((response) => {
+    queryString += `
+    GROUP BY articles.article_id
+    ORDER BY ${sort_by} ${order}`;
+
+    return db.query(queryString, sqlQuery).then((response) => {
         return response.rows;
     })
 }
