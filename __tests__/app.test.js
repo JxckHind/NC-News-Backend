@@ -854,7 +854,6 @@ describe('app', () => {
         test('status: 200 and responds with an object', () => {
             return request(app)
             .get('/api')
-            .get('/api/comments')
             .expect(200)
             .then((response) => {
                 const result = response.body;
