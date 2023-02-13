@@ -15,7 +15,7 @@ You can view all of the accessible endpoints by looking in the endpoints.json fi
 
 ## Cloning the repositry:
 
-- In your teminal please enter:
+- In the teminal please enter:
 
   ```
   $ git clone https://github.com/JxckHind/NC-News-Backend.git
@@ -24,7 +24,7 @@ You can view all of the accessible endpoints by looking in the endpoints.json fi
 
 ## Installing dependencies:
 
-- The required dependencies will be pulled from the package.json file. In your teminal please enter:
+- The required dependencies will be pulled from the package.json file. In the teminal please enter:
 
   ```
   $ npm install
@@ -48,7 +48,7 @@ You can view all of the accessible endpoints by looking in the endpoints.json fi
 
 ## Database set-up and seeding:
 
-- Before using or testing the application, you will need to set up the database and then seed it with the data. In your teminal please enter:
+- Before using or testing the application, you will need to set up the database and then seed it with the data. In the teminal please enter:
 
   ```
   $ npm run setup-dbs
@@ -58,7 +58,7 @@ You can view all of the accessible endpoints by looking in the endpoints.json fi
 ## Testing:
 
 - Jest is the framework used to test this application.
-- To run the tests, in your teminal please enter:
+- To run the tests, in the teminal please enter:
 
   ```
   $ npm test
@@ -68,7 +68,7 @@ You can view all of the accessible endpoints by looking in the endpoints.json fi
 
 ## Development mode:
 
-- To run the application in development mode, in your teminal please enter:
+- To run the application in development mode, in the teminal please enter:
 
   ```
   $ node app.listen.js
