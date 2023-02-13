@@ -18,7 +18,7 @@ You can view all of the accessible endpoints by looking in the endpoints.json fi
 - In your teminal please enter:
 
   ```
-  $ git clone https://github.com/JxckHind/Northcoders-Backend-Project-NC-News.git
+  $ git clone https://github.com/JxckHind/NC-News-Backend.git
   $ cd NC-News
   ```
 
