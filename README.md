@@ -1,6 +1,8 @@
 # Northcoders Backend Project - NC News API
 
-This project is an API for accessing a variety of news articles. It is built using Node.js, with Express.js for the server and PostgreSQL for the database. The database has three seed options when run: Test, Development and Production and has multiple accessible endpoints for every database.
+This project is an API for accessing a variety of news articles. You can filter these articles by topic and sort by date, comment count or number of votes in ascending or descending order. You can also vote on an article and place/delete comments.
+
+The project is built using Node.js, with Express.js for the server and PostgreSQL for the database. The database has three seed options when run: Test, Development and Production and has multiple accessible endpoints for every database.
 
 You can view all of the accessible endpoints by looking in the endpoints.json file. Alternatively, you can make a GET request to https://jack-nc-news-ap.onrender.com/api which will list all of the available endpoints you can interact with.
 
