@@ -4,11 +4,7 @@ This project is an API for accessing a variety of news articles. You can filter 
 
 The project is built using Node.js, with Express.js for the server and PostgreSQL for the database. The database has three seed options when run: Test, Development and Production and has multiple accessible endpoints for every database.
 
-<br />
-
 ## Link To Hosted Version: https://jack-nc-news-ap.onrender.com
-
-<br />
 
 ### Available Routes
 
@@ -24,8 +20,6 @@ The project is built using Node.js, with Express.js for the server and PostgreSQ
 | **POST** /api/articles/:article_id/comments | Adds a comment to the database about a specific article                   |
 | **DELETE** /api/comments/:comment_id        | Deletes a specific comment from the database                              |
 
-<br />
-
 ### **GET** /api/articles query parameters
 
 | Query   | Options                          | Default    |
@@ -33,8 +27,6 @@ The project is built using Node.js, with Express.js for the server and PostgreSQ
 | sort_by | created_at, comment_count, votes | created_at |
 | order   | asc, desc                        | desc       |
 | topic   | coding, football, cooking        | all topics |
-
-<br />
 
 # Setup
 
