@@ -4,9 +4,37 @@ This project is an API for accessing a variety of news articles. You can filter 
 
 The project is built using Node.js, with Express.js for the server and PostgreSQL for the database. The database has three seed options when run: Test, Development and Production and has multiple accessible endpoints for every database.
 
-You can view all of the accessible endpoints by looking in the endpoints.json file. Alternatively, you can make a GET request to https://jack-nc-news-ap.onrender.com/api which will list all of the available endpoints you can interact with.
+<br />
 
 ## Link To Hosted Version: https://jack-nc-news-ap.onrender.com
+
+<br />
+
+### Available Routes
+
+| Endpoint                                    | Description                                                               |
+| ------------------------------------------- | ------------------------------------------------------------------------- |
+| **GET** /api                                | Serves up a json representation of all the available endpoints of the API |
+| **GET** /api/topics                         | Serves an array of all the topics                                         |
+| **GET** /api/users                          | Serves an array of all the users                                          |
+| **GET** /api/articles                       | Serves an array of all the articles                                       |
+| **GET** /api/articles/:article_id           | Serves an object of a specific article                                    |
+| **GET** /api/articles/:article_id/comments  | Serves an array of all the comments for a specific article                |
+| **PATCH** /api/articles/:article_id         | Updates the number of votes in the database for a specific article        |
+| **POST** /api/articles/:article_id/comments | Adds a comment to the database about a specific article                   |
+| **DELETE** /api/comments/:comment_id        | Deletes a specific comment from the database                              |
+
+<br />
+
+### **GET** /api/articles query parameters
+
+| Query   | Options                          | Default    |
+| ------- | -------------------------------- | ---------- |
+| sort_by | created_at, comment_count, votes | created_at |
+| order   | asc, desc                        | desc       |
+| topic   | coding, football, cooking        | all topics |
+
+<br />
 
 # Setup
 
